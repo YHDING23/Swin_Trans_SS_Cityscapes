@@ -30,6 +30,14 @@ For instance, your cuda version is 10.2, then go back to the shell and
 ```angular2html
 pip install mmcv-full==1.3.0 -f https://download.openmmlab.com/mmcv/dist/cu102/torch1.7.0/index.html
 ```
+Don't install the latest mmcv-full model 1.6.1, the pretrained model upernet model is only compatible up to 1.30
+
+For cude 11.0 use
+
+```
+pip install mmcv-full==1.3.0 -f https://download.openmmlab.com/mmcv/dist/cu110/torch1.7.0/index.html
+```
+
 Please note the mcvv-full version is critical and may cause issues. If the error suggests a lower or higher mmcv version, please first uninstall the current mmcv then re-install the suggested version accordingly. 
 ```angular2html
 pip uninstall mmcv-full
@@ -47,7 +55,7 @@ First download a checkpoint file, e.g. :
 wget https://download.openmmlab.com/mmsegmentation/v0.5/upernet/upernet_r50_512x1024_40k_cityscapes/upernet_r50_512x1024_40k_cityscapes_20200605_094827-aa54cb54.pth
 ```
 The model corresponds to the config file in `configs/upernet/upernet_r101_512x1024_40k_cityscapes.py`.
-Then, Open you python interpreter and run the following codes.
+Then, Open you python interpreter and run the following codes. or ```python model_verify.py```
 ```
 from mmseg.apis import inference_segmentor, init_segmentor
 import mmcv
@@ -59,7 +67,7 @@ checkpoint_file = 'upernet_r50_512x1024_40k_cityscapes_20200605_094827-aa54cb54.
 model = init_segmentor(config_file, checkpoint_file, device='cuda:0')
 
 # test a single image and show the results
-img = 'test.jpg'  # or img = mmcv.imread(img), which will only load it once
+img = 'demo.jpg'  # or img = mmcv.imread(img), which will only load it once
 result = inference_segmentor(model, img)
 # save the visualization results to image files
 model.show_result(img, result, out_file='result.jpg')
@@ -73,8 +81,15 @@ data_root='/nfs_3/data/cityscapes'
 ```
 
 Download a pretrained model which is similar to the `upernet` checkpoint file used for the above verification. A model zoo can be found [here](https://github.com/open-mmlab/mmsegmentation/blob/v0.11.0/docs/model_zoo.md). Make sure to download the corresponding config file as well. 
-Start training:
+Start training (the number 8 means 8 GPUs):
 ```angular2html
-tools/dist_train.sh configs/upernet/upernet_r101_512x1024_40k_cityscapes.py 8 --options model.pretrained=pretrain/upernet_r50_512x1024_40k_cityscapes_20200605_094827-aa54cb54.pth
+tools/dist_train.sh configs/upernet/upernet_r101_512x1024_40k_cityscapes.py 8 --options model.pretrained=upernet_r50_512x1024_40k_cityscapes_20200605_094827-aa54cb54.pth
 ```
+## Docker image
+The above flow is put into [dockerfile](./dockerfile) as well. Example docker_build_cmd.sh and docker_run_cmd.sh files are provided.
 
+Sample image is pushed to ```centaurusinfra/swin-transform-ss-cityscapes```, the default CMD is like the above start training command but with 2 gpus.
+
+A single node pod yaml example with the above image using 2 GPUs is [single_node_2GPU_pod_example.yaml](./single_node_2GPU_pod_example.yaml).
+
+**Note**: Both the docker run mount and pod yaml mount ```/nfs_3/data/cityscapes/``` this is a local NFS server satore cityscapes data, if you cannot see this path on your nodes, modify to your dataset path accordingly.

@@ -1,0 +1,25 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: swin-trans-ss
+spec:
+  containers:
+  - name: pytorch
+    image: centaurusinfra/swin-transform-ss-cityscapes
+    command: ["tools/dist_train.sh", "configs/upernet/upernet_r101_512x1024_40k_cityscapes.py", "2", "--options", "model.pretrained=upernet_r50_512x1024_40k_cityscapes_20200605_094827-aa54cb54.pth"]
+    #command: ["sh", "-c", "sleep infinity"]
+    volumeMounts:
+    - mountPath: /dev/shm
+      name: dshm
+    - mountPath: /nfs_3/data/cityscapes/
+      name: dataset 
+  volumes:
+  - name: dshm  # this is to trick pytorch when large size of shared memory is needed
+    emptyDir:
+      medium: Memory
+  - name: dataset
+    hostPath:
+      path: /nfs_3/data/cityscapes/
+      type: Directory
+
+  restartPolicy: OnFailure
