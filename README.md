@@ -30,6 +30,14 @@ For instance, your cuda version is 10.2, then go back to the shell and
 ```angular2html
 pip install mmcv-full==1.3.0 -f https://download.openmmlab.com/mmcv/dist/cu102/torch1.7.0/index.html
 ```
+Don't install the latest mmcv-full model 1.6.1, the pretrained model upernet model is only compatible up to 1.30
+
+For cude 11.0 use
+
+```
+pip install mmcv-full==1.3.0 -f https://download.openmmlab.com/mmcv/dist/cu110/torch1.7.0/index.html
+```
+
 Please note the mcvv-full version is critical and may cause issues. If the error suggests a lower or higher mmcv version, please first uninstall the current mmcv then re-install the suggested version accordingly. 
 ```angular2html
 pip uninstall mmcv-full
@@ -47,7 +55,7 @@ First download a checkpoint file, e.g. :
 wget https://download.openmmlab.com/mmsegmentation/v0.5/upernet/upernet_r50_512x1024_40k_cityscapes/upernet_r50_512x1024_40k_cityscapes_20200605_094827-aa54cb54.pth
 ```
 The model corresponds to the config file in `configs/upernet/upernet_r101_512x1024_40k_cityscapes.py`.
-Then, Open you python interpreter and run the following codes.
+Then, Open you python interpreter and run the following codes. or ```python model_verify.py```
 ```
 from mmseg.apis import inference_segmentor, init_segmentor
 import mmcv
@@ -59,7 +67,7 @@ checkpoint_file = 'upernet_r50_512x1024_40k_cityscapes_20200605_094827-aa54cb54.
 model = init_segmentor(config_file, checkpoint_file, device='cuda:0')
 
 # test a single image and show the results
-img = 'test.jpg'  # or img = mmcv.imread(img), which will only load it once
+img = 'demo.jpg'  # or img = mmcv.imread(img), which will only load it once
 result = inference_segmentor(model, img)
 # save the visualization results to image files
 model.show_result(img, result, out_file='result.jpg')
