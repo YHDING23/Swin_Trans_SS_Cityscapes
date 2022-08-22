@@ -91,3 +91,5 @@ The above flow is put into [dockerfile](./dockerfile) as well. Example docker_bu
 Sample image is pushed to ```centaurusinfra/swin-transform-ss-cityscapes```, the default CMD is like the above start training command but with 2 gpus.
 
 A single node pod yaml example with the above image using 2 GPUs is [single_node_2GPU_pod_example.yaml](./single_node_2GPU_pod_example.yaml).
+
+**Note**: Both the docker run mount and pod yaml mount ```/nfs_3/data/cityscapes/``` this is a local NFS server satore cityscapes data, if you cannot see this path on your nodes, modify to your dataset path accordingly.
