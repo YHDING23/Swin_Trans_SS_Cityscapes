@@ -1,4 +1,4 @@
-# build cmd: docker build -t centaurausinfra/swin-transform-ss-cityscapes --build-arg CACHEBUST=$(date +%s) .
+# build cmd: docker build -t centaurusinfra/swin-transform-ss-cityscapes --build-arg CACHEBUST=$(date +%s) .
 From pytorch/pytorch:1.7.1-cuda11.0-cudnn8-runtime
 RUN apt-get update && apt-get install -y git vim wget
 RUN apt-get install ffmpeg libsm6 libxext6  -y # for libGL.so in container

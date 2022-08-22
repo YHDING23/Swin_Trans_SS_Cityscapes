@@ -85,4 +85,9 @@ Start training (the number 8 means 8 GPUs):
 ```angular2html
 tools/dist_train.sh configs/upernet/upernet_r101_512x1024_40k_cityscapes.py 8 --options model.pretrained=upernet_r50_512x1024_40k_cityscapes_20200605_094827-aa54cb54.pth
 ```
+## Docker image
+The above flow is put into [dockerfile](./dockerfile) as well. Example docker_build_cmd.sh and docker_run_cmd.sh files are provided.
 
+Sample image is pushed to ```centaurusinfra/swin-transform-ss-cityscapes```, the default CMD is like the above start training command but with 2 gpus.
+
+A single node pod yaml example with the above image using 2 GPUs is [single_node_2GPU_pod_example.yaml](./single_node_2GPU_pod_example.yaml).
