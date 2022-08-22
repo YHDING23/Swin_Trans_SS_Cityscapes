@@ -81,8 +81,8 @@ data_root='/nfs_3/data/cityscapes'
 ```
 
 Download a pretrained model which is similar to the `upernet` checkpoint file used for the above verification. A model zoo can be found [here](https://github.com/open-mmlab/mmsegmentation/blob/v0.11.0/docs/model_zoo.md). Make sure to download the corresponding config file as well. 
-Start training:
+Start training (the number 8 means 8 GPUs):
 ```angular2html
-tools/dist_train.sh configs/upernet/upernet_r101_512x1024_40k_cityscapes.py 8 --options model.pretrained=pretrain/upernet_r50_512x1024_40k_cityscapes_20200605_094827-aa54cb54.pth
+tools/dist_train.sh configs/upernet/upernet_r101_512x1024_40k_cityscapes.py 8 --options model.pretrained=upernet_r50_512x1024_40k_cityscapes_20200605_094827-aa54cb54.pth
 ```
 
