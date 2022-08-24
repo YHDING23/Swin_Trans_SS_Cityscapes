@@ -54,13 +54,13 @@ First download a checkpoint file, e.g. :
 ```angular2html
 wget https://download.openmmlab.com/mmsegmentation/v0.5/upernet/upernet_r50_512x1024_40k_cityscapes/upernet_r50_512x1024_40k_cityscapes_20200605_094827-aa54cb54.pth
 ```
-The model corresponds to the config file in `configs/upernet/upernet_r101_512x1024_40k_cityscapes.py`.
+The model corresponds to the config file in `configs/upernet/upernet_r50_512x1024_40k_cityscapes.py`.
 Then, Open you python interpreter and run the following codes. or ```python model_verify.py```
 ```
 from mmseg.apis import inference_segmentor, init_segmentor
 import mmcv
 
-config_file = 'configs/upernet/upernet_r101_512x1024_40k_cityscapes.py'
+config_file = 'configs/upernet/upernet_r50_512x1024_40k_cityscapes.py'
 checkpoint_file = 'upernet_r50_512x1024_40k_cityscapes_20200605_094827-aa54cb54.pth'
 
 # build the model from a config file and a checkpoint file
@@ -80,16 +80,33 @@ We prefer the cityscapes dataset for training. There is a copy in our NFS server
 data_root='/nfs_3/data/cityscapes'
 ```
 
+
 Download a pretrained model which is similar to the `upernet` checkpoint file used for the above verification. A model zoo can be found [here](https://github.com/open-mmlab/mmsegmentation/blob/v0.11.0/docs/model_zoo.md). Make sure to download the corresponding config file as well. 
+
 Start training (the number 8 means 8 GPUs):
+
+- Exp 1. Method: UPerNet, Backbone: ResNet50, Crop Size: 512*1024, Learning Rate Schedule: 40k, and Dataset: Cityscapes
 ```angular2html
-tools/dist_train.sh configs/upernet/upernet_r101_512x1024_40k_cityscapes.py 8 --options model.pretrained=upernet_r50_512x1024_40k_cityscapes_20200605_094827-aa54cb54.pth
+tools/dist_train.sh configs/upernet/upernet_r50_512x1024_40k_cityscapes.py 2 --options model.pretrained=upernet_r50_512x1024_40k_cityscapes_20200605_094827-aa54cb54.pth
 ```
+- Exp 2. Method: UPerNet, Backbone: Swin Transformer Tiny (Swin-T), Crop Size: 512*1024, Learning Rate Schedule: 40k, and Dataset: Cityscapes
+
+```angular2html
+
+# Firstly, download a Swin-T pretrained model using ImageNet-1k. 
+wget https://github.com/SwinTransformer/storage/releases/download/v1.0.0/swin_tiny_patch4_window7_224.pth 
+
+tools/dist_train.sh configs/swin/upernet_swin_tiny_patch4_window7_512x512_160k_cityscapes.py 8 --options model.pretrained=swin_tiny_patch4_window7_224.pth
+```
+
+
 ## Docker image
 The above flow is put into [dockerfile](./dockerfile) as well. Example docker_build_cmd.sh and docker_run_cmd.sh files are provided.
 
 Sample image is pushed to ```centaurusinfra/swin-transform-ss-cityscapes```, the default CMD is like the above start training command but with 2 gpus.
 
-A single node pod yaml example with the above image using 2 GPUs is [single_node_2GPU_pod_example.yaml](./single_node_2GPU_pod_example.yaml).
+Exp 1. A single node pod yaml example with the above image using 2 GPUs is [single_node_2GPU_pod_example.yaml](./single_node_2GPU_pod_example.yaml). 
+
+Exp 2. Similar to Exp 1, expecting a) download the pre-trained model and b) change the command line accordingly.  
 
 **Note**: Both the docker run mount and pod yaml mount ```/nfs_3/data/cityscapes/``` this is a local NFS server satore cityscapes data, if you cannot see this path on your nodes, modify to your dataset path accordingly.
